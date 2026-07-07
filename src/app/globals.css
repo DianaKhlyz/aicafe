@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/*
+ * Дизайн-токены проекта.
+ *
+ * Это временная «тёплая кофейная» палитра-заглушка. Когда будет готов макет
+ * дизайнера, итоговый стиль подключается заменой значений в этом блоке —
+ * компоненты используют только токены (bg-brand, text-ink, rounded-card...),
+ * без хардкода цветов.
+ */
+@theme {
+  /* Цвета бренда */
+  --color-brand: #b4531f;
+  --color-brand-dark: #8c3d12;
+  --color-brand-soft: #f6e3d7;
+
+  /* Поверхности и текст */
+  --color-cream: #faf6f1;
+  --color-surface: #ffffff;
+  --color-ink: #23201c;
+  --color-muted: #6b6459;
+  --color-line: #e8e1d7;
+
+  /* Служебные */
+  --color-success: #3e7c4f;
+  --color-danger: #b3261e;
+
+  /* Геометрия */
+  --radius-card: 1rem;
+  --radius-field: 0.75rem;
+
+  /* Типографика: дизайнер заменит на фирменные шрифты */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  @apply bg-cream text-ink antialiased;
+}
+
+/* Базовые элементы форм — до появления UI-кита из макета */
+.field {
+  @apply w-full rounded-field border border-line bg-surface px-3 py-2 text-sm
+    outline-none focus:border-brand;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-field bg-brand
+    px-5 py-2.5 text-sm font-semibold text-white transition-colors
+    hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-field border
+    border-line bg-surface px-5 py-2.5 text-sm font-semibold text-ink
+    transition-colors hover:border-brand hover:text-brand;
+}
