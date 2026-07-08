@@ -81,6 +81,12 @@ class OrderStatus(StrEnum):
     CANCELLED = "cancelled"
 
 
+class EtaView(BaseModel):
+    """Предпросмотр времени готовности самовывоза (до оформления заказа)."""
+
+    eta_minutes: int
+
+
 class OrderView(BaseModel):
     id: str
     mode: OrderMode

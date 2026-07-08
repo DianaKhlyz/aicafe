@@ -11,6 +11,13 @@ from app.services.menu import menu_service
 router = APIRouter(prefix="/api/orders", tags=["orders"])
 
 
+# Объявлен раньше GET /{order_id}, чтобы «eta» не захватывался как id заказа
+@router.get("/eta")
+async def pickup_eta() -> schemas.EtaView:
+    """Предпросмотр «ближайшего времени» самовывоза для чекаута."""
+    return schemas.EtaView(eta_minutes=await pickup_eta_minutes())
+
+
 @router.post("")
 async def checkout(request: schemas.CheckoutRequest) -> schemas.OrderView:
     """Чекаут: доставка / самовывоз ко времени / за столом.
@@ -19,6 +26,10 @@ async def checkout(request: schemas.CheckoutRequest) -> schemas.OrderView:
     """
     if not request.items:
         raise HTTPException(status_code=422, detail="Корзина пуста")
+    # Телефон обязателен для доставки/самовывоза (iiko требует его для заказа);
+    # за столом — опционален (гость уже на месте)
+    if request.mode != schemas.OrderMode.TABLE and not request.phone:
+        raise HTTPException(status_code=422, detail="Не указан телефон")
     await _reject_stop_listed(request)
 
     iiko = get_iiko_client()

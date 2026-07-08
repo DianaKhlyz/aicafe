@@ -22,10 +22,28 @@ def test_menu_returns_categories_with_stop_list(client):
     assert items["dish-syrniki"]["in_stop_list"] is False
 
 
+def test_eta_preview(client):
+    response = client.get("/api/orders/eta")
+    assert response.status_code == 200
+    assert response.json()["eta_minutes"] > 0
+
+
+def test_checkout_requires_phone_for_pickup(client):
+    response = client.post(
+        "/api/orders",
+        json={"mode": "pickup", "items": [{"item_id": "dish-syrniki", "quantity": 1}]},
+    )
+    assert response.status_code == 422
+
+
 def test_checkout_pickup_returns_eta(client):
     response = client.post(
         "/api/orders",
-        json={"mode": "pickup", "items": [{"item_id": "dish-syrniki", "quantity": 2}]},
+        json={
+            "mode": "pickup",
+            "phone": "+79990001122",
+            "items": [{"item_id": "dish-syrniki", "quantity": 2}],
+        },
     )
     assert response.status_code == 200
     order = response.json()
@@ -40,7 +58,11 @@ def test_checkout_pickup_returns_eta(client):
 def test_checkout_rejects_stop_listed_item(client):
     response = client.post(
         "/api/orders",
-        json={"mode": "pickup", "items": [{"item_id": "dish-tomyum", "quantity": 1}]},
+        json={
+            "mode": "pickup",
+            "phone": "+79990001122",
+            "items": [{"item_id": "dish-tomyum", "quantity": 1}],
+        },
     )
     assert response.status_code == 409
 

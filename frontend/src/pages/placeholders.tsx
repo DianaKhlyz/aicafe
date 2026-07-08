@@ -35,17 +35,6 @@ export function AboutPage() {
   return <h1>О кафе</h1>;
 }
 
-export function CheckoutPage() {
-  // Три ветки: доставка / самовывоз ко времени (ETA) / за столом.
-  // POST /api/orders уже работает на моках — подключим при вёрстке блока
-  return <h1>Оформление заказа</h1>;
-}
-
-export function OrderPage() {
-  // Живой трекер: GET /api/orders/{id} + SSE-канал orders
-  return <h1>Статус заказа</h1>;
-}
-
 export function AccountPage() {
   // Личный кабинет: история, повтор заказа, адреса, бонусы.
   // Появится вместе с авторизацией (flash-call / Telegram Gateway)

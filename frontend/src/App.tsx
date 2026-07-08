@@ -1,17 +1,18 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { MenuPage } from "./pages/Menu";
+import { DishPage } from "./pages/Dish";
 import { CartPage } from "./pages/Cart";
+import { CheckoutPage } from "./pages/Checkout";
+import { OrderPage } from "./pages/Order";
 import { TablePage } from "./pages/Table";
 import {
   AboutPage,
   AccountPage,
   BookingPage,
-  CheckoutPage,
   DeliveryPage,
   HomePage,
   NotFoundPage,
-  OrderPage,
   PromoPage,
 } from "./pages/placeholders";
 import { useCart } from "./features/cart/store";
@@ -42,6 +43,7 @@ export function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/menu" element={<MenuPage />} />
+            <Route path="/menu/:dishId" element={<DishPage />} />
             <Route path="/promo" element={<PromoPage />} />
             <Route path="/booking" element={<BookingPage />} />
             <Route path="/delivery" element={<DeliveryPage />} />

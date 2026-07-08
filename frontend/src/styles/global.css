@@ -127,3 +127,169 @@ button,
   border-radius: var(--radius);
   padding: var(--space-2) var(--space-3);
 }
+
+/* Фильтры меню */
+.menu-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.menu-filters input[type="search"] {
+  font: inherit;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  width: 100%;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.chip {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.chip--active {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  border-color: var(--color-accent);
+}
+
+.chip--excluded {
+  background: var(--color-danger);
+  color: var(--color-accent-contrast);
+  border-color: var(--color-danger);
+  text-decoration: line-through;
+}
+
+.allergen-filter summary {
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-1);
+}
+
+.dish h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Карточка блюда */
+.dish-card img {
+  max-width: 100%;
+  border-radius: var(--radius);
+}
+
+.nutrition-table {
+  border-collapse: collapse;
+  margin: var(--space-3) 0;
+}
+
+.nutrition-table caption {
+  text-align: left;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-1);
+}
+
+.nutrition-table td {
+  border: 1px solid var(--color-border);
+  padding: var(--space-1) var(--space-3);
+}
+
+.dish-allergens {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.dish-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-3);
+}
+
+/* Чекаут */
+.checkout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.mode-switch,
+.checkout fieldset {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.mode-option input {
+  margin-right: var(--space-2);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-field input,
+.form-field textarea {
+  font: inherit;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.form-hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.form-error {
+  color: var(--color-danger);
+}
+
+.button-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Трекер заказа */
+.tracker-steps {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.step {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+}
+
+.step--done {
+  border-color: var(--color-accent);
+}
+
+.step--current {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  border-color: var(--color-accent);
+  font-weight: 600;
+}

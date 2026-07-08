@@ -24,6 +24,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/orders/eta": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Pickup Eta
+         * @description Предпросмотр «ближайшего времени» самовывоза для чекаута.
+         */
+        get: operations["pickup_eta_api_orders_eta_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/orders": {
         parameters: {
             query?: never;
@@ -274,6 +294,14 @@ export interface components {
              */
             delivery_price: number;
         };
+        /**
+         * EtaView
+         * @description Предпросмотр времени готовности самовывоза (до оформления заказа).
+         */
+        EtaView: {
+            /** Eta Minutes */
+            eta_minutes: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -467,6 +495,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Menu"];
+                };
+            };
+        };
+    };
+    pickup_eta_api_orders_eta_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EtaView"];
                 };
             };
         };
