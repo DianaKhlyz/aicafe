@@ -97,6 +97,30 @@ class OrderView(BaseModel):
     created_at: datetime
 
 
+# --- Общая корзина стола ------------------------------------------------------
+
+
+class TableCartLine(BaseModel):
+    item_id: str
+    name: str
+    price: float
+    quantity: int
+    guest: str  # кто из гостей добавил
+
+
+class TableCart(BaseModel):
+    table_code: str
+    lines: list[TableCartLine]
+    total: float
+    updated_at: datetime
+
+
+class TableCartUpdate(BaseModel):
+    item_id: str
+    quantity: int = Field(ge=0)  # 0 = убрать позицию гостя
+    guest: str = Field(default="Гость", max_length=40)
+
+
 # --- Зоны доставки -----------------------------------------------------------
 
 

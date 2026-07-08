@@ -7,6 +7,7 @@ from app.db import session_factory
 from app.models import OrderLink
 from app.services.eta import pickup_eta_minutes
 from app.services.menu import menu_service
+from app.services.table_cart import table_cart_service
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
 
@@ -23,7 +24,15 @@ async def checkout(request: schemas.CheckoutRequest) -> schemas.OrderView:
     """Чекаут: доставка / самовывоз ко времени / за столом.
 
     Гостевой чекаут — всегда доступен, авторизация не требуется.
+    За столом источник состава — общая корзина стола на сервере,
+    request.items игнорируется (все гости наполняют одну корзину).
     """
+    if request.mode == schemas.OrderMode.TABLE:
+        if not request.table_code:
+            raise HTTPException(status_code=422, detail="Не указан стол")
+        request = request.model_copy(
+            update={"items": table_cart_service.items_for_order(request.table_code)}
+        )
     if not request.items:
         raise HTTPException(status_code=422, detail="Корзина пуста")
     # Телефон обязателен для доставки/самовывоза (iiko требует его для заказа);
@@ -44,9 +53,8 @@ async def checkout(request: schemas.CheckoutRequest) -> schemas.OrderView:
                 eta = await pickup_eta_minutes()
             iiko_order_id = await iiko.create_pickup_order(request)
         case schemas.OrderMode.TABLE:
-            if not request.table_code:
-                raise HTTPException(status_code=422, detail="Не указан стол")
             iiko_order_id = await iiko.create_table_order(request)
+            table_cart_service.clear(request.table_code or "")
 
     amount = await _order_amount(request)
     payment = await get_payment_provider().create_payment(iiko_order_id, amount)

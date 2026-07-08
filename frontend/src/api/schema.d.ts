@@ -58,6 +58,8 @@ export interface paths {
          * @description Чекаут: доставка / самовывоз ко времени / за столом.
          *
          *     Гостевой чекаут — всегда доступен, авторизация не требуется.
+         *     За столом источник состава — общая корзина стола на сервере,
+         *     request.items игнорируется (все гости наполняют одну корзину).
          */
         post: operations["checkout_api_orders_post"];
         delete?: never;
@@ -157,6 +159,30 @@ export interface paths {
         put?: never;
         /** Create Reserve */
         post: operations["create_reserve_api_booking_reserve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tables/{table_code}/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Table Cart
+         * @description Общая корзина стола — одна на всех гостей, вошедших по QR.
+         */
+        get: operations["get_table_cart_api_tables__table_code__cart_get"];
+        put?: never;
+        /**
+         * Update Table Cart
+         * @description Гость добавляет/меняет позицию; остальные видят по SSE (канал table-cart).
+         */
+        post: operations["update_table_cart_api_tables__table_code__cart_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -460,6 +486,45 @@ export interface components {
              */
             occupied: boolean;
         };
+        /** TableCart */
+        TableCart: {
+            /** Table Code */
+            table_code: string;
+            /** Lines */
+            lines: components["schemas"]["TableCartLine"][];
+            /** Total */
+            total: number;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** TableCartLine */
+        TableCartLine: {
+            /** Item Id */
+            item_id: string;
+            /** Name */
+            name: string;
+            /** Price */
+            price: number;
+            /** Quantity */
+            quantity: number;
+            /** Guest */
+            guest: string;
+        };
+        /** TableCartUpdate */
+        TableCartUpdate: {
+            /** Item Id */
+            item_id: string;
+            /** Quantity */
+            quantity: number;
+            /**
+             * Guest
+             * @default Гость
+             */
+            guest: string;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -679,6 +744,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReserveView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_table_cart_api_tables__table_code__cart_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                table_code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TableCart"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_table_cart_api_tables__table_code__cart_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                table_code: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TableCartUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TableCart"];
                 };
             };
             /** @description Validation Error */

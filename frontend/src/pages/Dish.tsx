@@ -1,10 +1,10 @@
 import { Link, useParams } from "react-router-dom";
-import { useCart } from "../features/cart/store";
+import { useAddItem } from "../features/cart/useAddItem";
 import { useMenu } from "./Menu";
 
 export function DishPage() {
   const { dishId } = useParams<{ dishId: string }>();
-  const addToCart = useCart((state) => state.add);
+  const addToCart = useAddItem();
   const { data: menu, isPending } = useMenu();
 
   if (isPending) return <p>Загружаем…</p>;

@@ -106,6 +106,40 @@ def test_reserve_marks_table_occupied(client):
     assert table["occupied"] is True
 
 
+def test_table_cart_shared_flow(client):
+    # Два гостя наполняют одну корзину стола
+    client.post(
+        "/api/tables/A2/cart",
+        json={"item_id": "dish-syrniki", "quantity": 2, "guest": "Аня"},
+    )
+    response = client.post(
+        "/api/tables/A2/cart",
+        json={"item_id": "dish-raf", "quantity": 1, "guest": "Борис"},
+    )
+    cart = response.json()
+    assert len(cart["lines"]) == 2
+    assert cart["total"] == 320 * 2 + 290
+    assert {line["guest"] for line in cart["lines"]} == {"Аня", "Борис"}
+
+    # Чекаут стола берёт серверную корзину и очищает её
+    order = client.post(
+        "/api/orders",
+        json={"mode": "table", "table_code": "A2", "items": []},
+    )
+    assert order.status_code == 200
+
+    cleared = client.get("/api/tables/A2/cart").json()
+    assert cleared["lines"] == []
+
+
+def test_table_checkout_with_empty_table_cart_rejected(client):
+    response = client.post(
+        "/api/orders",
+        json={"mode": "table", "table_code": "A9", "items": []},
+    )
+    assert response.status_code == 422
+
+
 def test_reserve_validates_guests_and_phone(client):
     bad_guests = client.post(
         "/api/booking/reserve",

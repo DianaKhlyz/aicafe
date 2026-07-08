@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import booking, delivery, menu, orders, sse, webhooks
+from app.api import booking, delivery, menu, orders, sse, tables, webhooks
 from app.config import settings
 from app.db import create_tables
 from app.services.menu import menu_service
@@ -31,6 +31,7 @@ app.include_router(menu.router)
 app.include_router(orders.router)
 app.include_router(delivery.router)
 app.include_router(booking.router)
+app.include_router(tables.router)
 app.include_router(webhooks.router)
 app.include_router(sse.router)
 

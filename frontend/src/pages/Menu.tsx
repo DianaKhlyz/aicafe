@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
-import { useCart } from "../features/cart/store";
+import { useAddItem } from "../features/cart/useAddItem";
 import { useSSE } from "../shared/useSSE";
 
 export function useMenu() {
@@ -18,7 +18,7 @@ export function useMenu() {
 
 export function MenuPage() {
   const queryClient = useQueryClient();
-  const addToCart = useCart((state) => state.add);
+  const addToCart = useAddItem();
 
   const [search, setSearch] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>([]);

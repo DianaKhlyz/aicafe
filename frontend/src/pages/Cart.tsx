@@ -1,8 +1,22 @@
 import { Link } from "react-router-dom";
+import { TableCartPanel } from "../features/cart/TableCartPanel";
 import { useCart } from "../features/cart/store";
 
 export function CartPage() {
   const { lines, setQuantity, remove, total, mode, tableCode } = useCart();
+
+  // За столом корзина общая и живёт на сервере
+  if (mode === "table" && tableCode) {
+    return (
+      <div>
+        <h1>Корзина · стол {tableCode}</h1>
+        <TableCartPanel tableCode={tableCode} />
+        <p>
+          <Link to={`/t/${tableCode}`}>← К меню стола</Link>
+        </p>
+      </div>
+    );
+  }
 
   if (lines.length === 0) {
     return (
@@ -18,7 +32,6 @@ export function CartPage() {
   return (
     <div>
       <h1>Корзина</h1>
-      {mode === "table" && <p>Заказ за столом {tableCode}</p>}
       <ul className="cart-lines">
         {lines.map((line) => (
           <li key={line.itemId}>

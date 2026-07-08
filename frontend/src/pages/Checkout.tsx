@@ -7,10 +7,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { type OrderMode, useCart } from "../features/cart/store";
+import { useTableCart } from "../features/cart/useTableCart";
 
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { lines, mode, tableCode, setMode, total, clear } = useCart();
+  const isTable = mode === "table" && Boolean(tableCode);
+  // За столом состав и сумма живут на сервере (общая корзина стола)
+  const { cart: tableCart } = useTableCart(isTable ? tableCode : null);
 
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -36,7 +40,10 @@ export function CheckoutPage() {
       const { data, error: apiError } = await api.POST("/api/orders", {
         body: {
           mode,
-          items: lines.map((line) => ({ item_id: line.itemId, quantity: line.quantity })),
+          // За столом сервер берёт общую корзину стола, items игнорируется
+          items: isTable
+            ? []
+            : lines.map((line) => ({ item_id: line.itemId, quantity: line.quantity })),
           phone: phone || null,
           address: mode === "delivery" ? address : null,
           desired_time:
@@ -57,12 +64,14 @@ export function CheckoutPage() {
     onError: () => setError("Не получилось оформить заказ — проверьте данные и попробуйте ещё раз"),
   });
 
-  if (lines.length === 0) {
+  const cartIsEmpty = isTable ? (tableCart?.lines.length ?? 0) === 0 : lines.length === 0;
+  if (cartIsEmpty) {
     return (
       <div>
         <h1>Оформление заказа</h1>
         <p>
-          Корзина пуста. <Link to="/menu">Посмотреть меню</Link>
+          Корзина пуста.{" "}
+          <Link to={isTable ? `/t/${tableCode}` : "/menu"}>Посмотреть меню</Link>
         </p>
       </div>
     );
@@ -152,7 +161,7 @@ export function CheckoutPage() {
         <textarea value={comment} onChange={(event) => setComment(event.target.value)} rows={2} />
       </label>
 
-      <p className="cart-total">К оплате: {total()} ₽</p>
+      <p className="cart-total">К оплате: {isTable ? (tableCart?.total ?? 0) : total()} ₽</p>
       {error && <p className="form-error">{error}</p>}
       <button
         className="button-primary"

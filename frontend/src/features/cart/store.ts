@@ -17,6 +17,8 @@ interface CartState {
   lines: CartLine[];
   mode: OrderMode;
   tableCode: string | null;
+  guestName: string; // имя гостя для общей корзины стола
+  setGuestName: (name: string) => void;
   add: (item: Omit<CartLine, "quantity">) => void;
   remove: (itemId: string) => void;
   setQuantity: (itemId: string, quantity: number) => void;
@@ -32,6 +34,8 @@ export const useCart = create<CartState>()(
       lines: [],
       mode: "delivery",
       tableCode: null,
+      guestName: "",
+      setGuestName: (name) => set({ guestName: name.slice(0, 40) }),
 
       add: (item) =>
         set((state) => {
