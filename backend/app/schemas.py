@@ -8,7 +8,7 @@ TS-типы фронтенда (`make types`).
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # --- Меню -----------------------------------------------------------------
 
@@ -140,8 +140,8 @@ class Section(BaseModel):
 
 class ReserveRequest(BaseModel):
     table_id: str
-    phone: str
-    guests: int
+    phone: str = Field(min_length=10)
+    guests: int = Field(ge=1)
     time: datetime
 
 

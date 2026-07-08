@@ -139,6 +139,8 @@ class MockIikoClient:
         # «Том-ям» в стоп-листе — чтобы флоу стоп-листов был виден сразу
         self.stop_list: set[str] = {"dish-tomyum"}
         self.active_orders = 3  # имитация очереди на кухне
+        # Столы, занятые бронями с сайта (в реале занятость придёт из резервов iiko)
+        self._reserved_tables: set[str] = set()
 
     async def get_menu(self) -> schemas.Menu:
         return _menu()
@@ -162,7 +164,7 @@ class MockIikoClient:
         return self.active_orders
 
     async def get_sections(self) -> list[schemas.Section]:
-        return [
+        sections = [
             schemas.Section(
                 id="hall-main",
                 name="Основной зал",
@@ -184,8 +186,14 @@ class MockIikoClient:
                 ],
             ),
         ]
+        for section in sections:
+            for table in section.tables:
+                if table.id in self._reserved_tables:
+                    table.occupied = True
+        return sections
 
     async def create_reserve(self, request: schemas.ReserveRequest) -> schemas.ReserveView:
+        self._reserved_tables.add(request.table_id)
         return schemas.ReserveView(
             id=f"mock-reserve-{next(self._reserve_seq)}",
             table_id=request.table_id,

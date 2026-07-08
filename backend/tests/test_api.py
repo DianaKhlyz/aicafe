@@ -86,3 +86,40 @@ def test_booking_sections(client):
     sections = response.json()
     assert len(sections) == 2
     assert any(t["occupied"] for s in sections for t in s["tables"])
+
+
+def test_reserve_marks_table_occupied(client):
+    response = client.post(
+        "/api/booking/reserve",
+        json={
+            "table_id": "t1",
+            "phone": "+79990001122",
+            "guests": 2,
+            "time": "2026-07-09T18:00:00Z",
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["status"] == "confirmed"
+
+    sections = client.get("/api/booking/sections").json()
+    table = next(t for s in sections for t in s["tables"] if t["id"] == "t1")
+    assert table["occupied"] is True
+
+
+def test_reserve_validates_guests_and_phone(client):
+    bad_guests = client.post(
+        "/api/booking/reserve",
+        json={
+            "table_id": "t2",
+            "phone": "+79990001122",
+            "guests": 0,
+            "time": "2026-07-09T18:00:00Z",
+        },
+    )
+    assert bad_guests.status_code == 422
+
+    bad_phone = client.post(
+        "/api/booking/reserve",
+        json={"table_id": "t2", "phone": "123", "guests": 2, "time": "2026-07-09T18:00:00Z"},
+    )
+    assert bad_phone.status_code == 422

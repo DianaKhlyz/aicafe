@@ -133,6 +133,9 @@ export interface paths {
         /**
          * Get Sections
          * @description Схема залов со столами для интерактивной карты (координаты — из iiko).
+         *
+         *     TODO на реальном iiko: занятость по выбранному времени (?date=), а не
+         *     только текущая — доступность слотов посчитаем из списка резервов.
          */
         get: operations["get_sections_api_booking_sections_get"];
         put?: never;

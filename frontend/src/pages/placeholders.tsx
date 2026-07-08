@@ -20,12 +20,6 @@ export function PromoPage() {
   return <h1>Акции и новости</h1>;
 }
 
-export function BookingPage() {
-  // Интерактивная карта зала: GET /api/booking/sections уже отдаёт схему
-  // залов со столами и координатами (мок iiko)
-  return <h1>Бронь стола</h1>;
-}
-
 export function DeliveryPage() {
   // Карта зон (GET /api/delivery/zones) + условия доставки
   return <h1>Доставка и оплата</h1>;

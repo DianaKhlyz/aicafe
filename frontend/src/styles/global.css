@@ -267,6 +267,86 @@ button,
   cursor: not-allowed;
 }
 
+/* Карта зала (бронь) */
+.hall {
+  margin: 0 0 var(--space-3);
+}
+
+.hall figcaption {
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+.hall svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hall-floor {
+  fill: var(--color-surface);
+  stroke: var(--color-border);
+  stroke-width: 0.5;
+}
+
+.table-spot {
+  cursor: pointer;
+}
+
+.table-spot circle {
+  fill: var(--color-bg);
+  stroke: var(--color-accent);
+  stroke-width: 0.8;
+}
+
+.table-spot text {
+  font-size: 3.2px;
+  fill: var(--color-text);
+  pointer-events: none;
+}
+
+.table-spot .table-seats {
+  font-size: 2.4px;
+  fill: var(--color-text-muted);
+}
+
+.table-spot--selected circle {
+  fill: var(--color-accent);
+}
+
+.table-spot--selected text {
+  fill: var(--color-accent-contrast);
+}
+
+.table-spot--occupied {
+  cursor: not-allowed;
+}
+
+.table-spot--occupied circle {
+  fill: var(--color-border);
+  stroke: var(--color-border);
+}
+
+.table-spot--occupied text {
+  fill: var(--color-text-muted);
+}
+
+.reserve-form {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.reserve-form select {
+  font: inherit;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
 /* Трекер заказа */
 .tracker-steps {
   list-style: none;

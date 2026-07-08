@@ -6,10 +6,10 @@ import { CartPage } from "./pages/Cart";
 import { CheckoutPage } from "./pages/Checkout";
 import { OrderPage } from "./pages/Order";
 import { TablePage } from "./pages/Table";
+import { BookingPage } from "./pages/Booking";
 import {
   AboutPage,
   AccountPage,
-  BookingPage,
   DeliveryPage,
   HomePage,
   NotFoundPage,
