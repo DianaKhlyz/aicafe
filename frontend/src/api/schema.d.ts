@@ -85,6 +85,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/delivery/suggest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Suggest Address
+         * @description Подсказки адресов для чекаута (DaData или мок, пока нет ключа).
+         */
+        get: operations["suggest_address_api_delivery_suggest_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/delivery/zones": {
         parameters: {
             query?: never;
@@ -276,6 +296,18 @@ export interface components {
             /** In Zone */
             in_zone: boolean;
             zone?: components["schemas"]["DeliveryZone"] | null;
+        };
+        /**
+         * AddressSuggestion
+         * @description Подсказка адреса (DaData или заглушка) с координатами для проверки зоны.
+         */
+        AddressSuggestion: {
+            /** Value */
+            value: string;
+            /** Lat */
+            lat: number;
+            /** Lon */
+            lon: number;
         };
         /** CartItem */
         CartItem: {
@@ -638,6 +670,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    suggest_address_api_delivery_suggest_get: {
+        parameters: {
+            query: {
+                query: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddressSuggestion"][];
                 };
             };
             /** @description Validation Error */

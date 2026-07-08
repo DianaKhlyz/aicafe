@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
+import { AddressField, type ZoneCheck } from "../features/address/AddressField";
 import { type OrderMode, useCart } from "../features/cart/store";
 import { useTableCart } from "../features/cart/useTableCart";
 
@@ -18,6 +19,7 @@ export function CheckoutPage() {
 
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [zoneCheck, setZoneCheck] = useState<ZoneCheck | null>(null);
   const [pickupAsap, setPickupAsap] = useState(true);
   const [desiredTime, setDesiredTime] = useState("");
   const [comment, setComment] = useState("");
@@ -78,10 +80,18 @@ export function CheckoutPage() {
   }
 
   const phoneRequired = mode !== "table";
+  const orderTotal = isTable ? (tableCart?.total ?? 0) : total();
+  const belowMinOrder =
+    mode === "delivery" &&
+    zoneCheck?.in_zone === true &&
+    orderTotal < (zoneCheck.zone?.min_order ?? 0);
+  // Если подсказка не выбрана (zoneCheck нет) — не блокируем: адрес
+  // дополнительно проверит iiko при создании заказа
   const canSubmit =
     !checkout.isPending &&
     (!phoneRequired || phone.trim().length >= 10) &&
     (mode !== "delivery" || address.trim().length > 3) &&
+    (mode !== "delivery" || zoneCheck === null || (zoneCheck.in_zone && !belowMinOrder)) &&
     (mode !== "table" || Boolean(tableCode));
 
   return (
@@ -124,15 +134,24 @@ export function CheckoutPage() {
       </label>
 
       {mode === "delivery" && (
-        <label className="form-field">
-          Адрес доставки
-          <input
-            type="text"
-            placeholder="Улица, дом, квартира"
-            value={address}
-            onChange={(event) => setAddress(event.target.value)}
-          />
-        </label>
+        <div className="form-field">
+          <label>Адрес доставки</label>
+          <AddressField value={address} onChange={setAddress} onZoneCheck={setZoneCheck} />
+          {zoneCheck?.in_zone && zoneCheck.zone && (
+            <p className="form-hint form-hint--ok">
+              Зона «{zoneCheck.zone.name}»: доставка{" "}
+              {zoneCheck.zone.delivery_price > 0
+                ? `${zoneCheck.zone.delivery_price} ₽`
+                : "бесплатно"}
+              , минимальный заказ {zoneCheck.zone.min_order} ₽
+            </p>
+          )}
+          {zoneCheck && !zoneCheck.in_zone && (
+            <p className="form-error">
+              Увы, этот адрес вне зоны доставки. Можно оформить самовывоз.
+            </p>
+          )}
+        </div>
       )}
 
       {mode === "pickup" && (
@@ -161,7 +180,12 @@ export function CheckoutPage() {
         <textarea value={comment} onChange={(event) => setComment(event.target.value)} rows={2} />
       </label>
 
-      <p className="cart-total">К оплате: {isTable ? (tableCart?.total ?? 0) : total()} ₽</p>
+      {belowMinOrder && zoneCheck?.zone && (
+        <p className="form-error">
+          До минимального заказа в вашей зоне не хватает {zoneCheck.zone.min_order - orderTotal} ₽.
+        </p>
+      )}
+      <p className="cart-total">К оплате: {orderTotal} ₽</p>
       {error && <p className="form-error">{error}</p>}
       <button
         className="button-primary"

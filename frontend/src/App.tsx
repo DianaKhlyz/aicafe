@@ -1,5 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Suspense, lazy } from "react";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { HomePage } from "./pages/Home";
 import { MenuPage } from "./pages/Menu";
 import { DishPage } from "./pages/Dish";
 import { CartPage } from "./pages/Cart";
@@ -7,14 +9,12 @@ import { CheckoutPage } from "./pages/Checkout";
 import { OrderPage } from "./pages/Order";
 import { TablePage } from "./pages/Table";
 import { BookingPage } from "./pages/Booking";
-import {
-  AboutPage,
-  AccountPage,
-  DeliveryPage,
-  HomePage,
-  NotFoundPage,
-  PromoPage,
-} from "./pages/placeholders";
+import { AboutPage, AccountPage, NotFoundPage, PromoPage } from "./pages/placeholders";
+
+// Leaflet тяжёлый — грузим страницу «Доставка» отдельным чанком
+const DeliveryPage = lazy(() =>
+  import("./pages/Delivery").then((module) => ({ default: module.DeliveryPage })),
+);
 import { useCart } from "./features/cart/store";
 
 const queryClient = new QueryClient();
@@ -46,7 +46,14 @@ export function App() {
             <Route path="/menu/:dishId" element={<DishPage />} />
             <Route path="/promo" element={<PromoPage />} />
             <Route path="/booking" element={<BookingPage />} />
-            <Route path="/delivery" element={<DeliveryPage />} />
+            <Route
+              path="/delivery"
+              element={
+                <Suspense fallback={<p>Загружаем карту…</p>}>
+                  <DeliveryPage />
+                </Suspense>
+              }
+            />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />

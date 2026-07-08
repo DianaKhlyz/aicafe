@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     # Список организаций: сейчас одна точка, при расширении до сети код не меняется
     iiko_organization_ids: list[str] = []
 
+    # DaData: пустой ключ = мок-подсказки; ключ регистрируется на аккаунт
+    # заказчика (бесплатный тариф, 10 000 запросов/день)
+    dadata_api_key: str = ""
+
     database_path: str = "aicafe.db"
     cors_origins: list[str] = ["http://localhost:5173"]
 

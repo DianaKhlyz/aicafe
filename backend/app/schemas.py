@@ -132,6 +132,14 @@ class DeliveryZone(BaseModel):
     delivery_price: float = 0
 
 
+class AddressSuggestion(BaseModel):
+    """Подсказка адреса (DaData или заглушка) с координатами для проверки зоны."""
+
+    value: str
+    lat: float
+    lon: float
+
+
 class AddressCheckRequest(BaseModel):
     lat: float
     lon: float

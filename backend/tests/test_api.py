@@ -80,6 +80,24 @@ def test_check_address_in_zone(client):
     assert response.json()["in_zone"] is False
 
 
+def test_suggest_addresses(client):
+    response = client.get("/api/delivery/suggest", params={"query": "Тверская"})
+    assert response.status_code == 200
+    suggestions = response.json()
+    assert len(suggestions) == 2
+    assert all("lat" in s and "lon" in s for s in suggestions)
+
+    # Мок-адрес из зоны «Центр» действительно проходит проверку зоны
+    inside = next(s for s in suggestions if s["value"] == "ул Тверская, д 7")
+    check = client.post(
+        "/api/delivery/check-address", json={"lat": inside["lat"], "lon": inside["lon"]}
+    ).json()
+    assert check["in_zone"] is True
+
+    too_short = client.get("/api/delivery/suggest", params={"query": "ул"})
+    assert too_short.status_code == 422
+
+
 def test_booking_sections(client):
     response = client.get("/api/booking/sections")
     assert response.status_code == 200
