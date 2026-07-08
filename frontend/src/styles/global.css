@@ -1,0 +1,129 @@
+/* Базовая вёрстка каркаса, mobile-first.
+   Итоговый дизайн натягивается через токены + стили компонентов. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+.site-header nav {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.site-header a {
+  color: var(--color-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-main {
+  padding: var(--space-3);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+button,
+.button-primary {
+  font: inherit;
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.menu-grid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  /* Одна колонка на телефоне, шире — на планшете/десктопе */
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .menu-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.dish {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  background: var(--color-surface);
+}
+
+.dish--stopped {
+  opacity: 0.5;
+}
+
+.dish h3 {
+  margin: 0 0 var(--space-1);
+}
+
+.dish p {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.dish footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dish-price {
+  font-weight: 600;
+}
+
+.dish-stopped-label {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+
+.cart-lines {
+  list-style: none;
+  padding: 0;
+}
+
+.cart-lines li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cart-qty {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.cart-total {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.table-banner {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+}

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Данные и секреты
+*.db
+*.db-*
+.env
+
+# IDE
+.idea/
+.vscode/
