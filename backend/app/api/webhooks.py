@@ -7,9 +7,10 @@ DeliveryOrderUpdate (статусы заказов), ReserveUpdate (занято
 
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Request
 from sqlalchemy import select
 
+from app.config import settings
 from app.db import session_factory
 from app.events import bus
 from app.models import OrderLink
@@ -19,7 +20,12 @@ router = APIRouter(prefix="/api/webhooks", tags=["webhooks"])
 
 
 @router.post("/iiko")
-async def iiko_webhook(events: list[dict[str, Any]]) -> dict[str, str]:
+async def iiko_webhook(events: list[dict[str, Any]], request: Request) -> dict[str, str]:
+    # iiko передаёт authToken из настроек вебхука в заголовке Authorization
+    if settings.iiko_webhook_auth_token and (
+        request.headers.get("Authorization") != settings.iiko_webhook_auth_token
+    ):
+        raise HTTPException(status_code=401)
     for event in events:
         match event.get("eventType"):
             case "StopListUpdate":

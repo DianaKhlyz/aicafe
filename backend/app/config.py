@@ -9,6 +9,14 @@ class Settings(BaseSettings):
     iiko_api_login: str = ""
     # Список организаций: сейчас одна точка, при расширении до сети код не меняется
     iiko_organization_ids: list[str] = []
+    # Пусто = определяются автоматически первым запросом (кэшируются)
+    iiko_terminal_group_id: str = ""
+    iiko_external_menu_id: str = ""
+    # iiko передаёт время терминала без таймзоны — нужен его часовой пояс
+    iiko_terminal_timezone: str = "Europe/Moscow"
+    # Публичный URL https://домен/api/webhooks/iiko; пусто = вебхуки не настраивать
+    iiko_webhook_url: str = ""
+    iiko_webhook_auth_token: str = ""
 
     # DaData: пустой ключ = мок-подсказки; ключ регистрируется на аккаунт
     # заказчика (бесплатный тариф, 10 000 запросов/день)
