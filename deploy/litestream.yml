@@ -1,0 +1,14 @@
+# Непрерывный бэкап SQLite в S3-совместимое хранилище (опционально).
+# Устанавливается в /etc/litestream.yml; без него сайт работает, просто
+# без офсайт-бэкапа. Хранилище — любое S3-совместимое (~0–150 руб/мес
+# при нашем объёме). Восстановление: litestream restore -o aicafe.db <url>
+
+dbs:
+  - path: /opt/aicafe/backend/aicafe.db
+    replicas:
+      - type: s3
+        bucket: BUCKET_NAME
+        path: aicafe-db
+        endpoint: https://s3.example-storage.ru
+        access-key-id: ACCESS_KEY
+        secret-access-key: SECRET_KEY

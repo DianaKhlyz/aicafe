@@ -1,0 +1,24 @@
+# Конфиг Caddy: HTTPS автоматически (Let's Encrypt), статика фронта + прокси BFF.
+# setup.sh подставляет реальный домен вместо example.ru и кладёт в /etc/caddy/.
+
+example.ru {
+	encode zstd gzip
+
+	# SSE-стрим: отдаём события без буферизации
+	handle /api/events {
+		reverse_proxy 127.0.0.1:8000 {
+			flush_interval -1
+		}
+	}
+
+	handle /api/* {
+		reverse_proxy 127.0.0.1:8000
+	}
+
+	# SPA: любые пути без файла падают на index.html (роутинг на клиенте)
+	handle {
+		root * /opt/aicafe/frontend/dist
+		try_files {path} /index.html
+		file_server
+	}
+}

@@ -198,6 +198,10 @@ flowchart LR
 
 ## 10. Деплой и эксплуатация
 
+Готовая обвязка — в каталоге [`deploy/`](../deploy/README.md): скрипт
+настройки чистого VPS (`setup.sh домен.ru`), скрипт обновления
+(`update.sh`), systemd-юнит, Caddyfile, шаблон Litestream.
+
 - VPS в РФ (~2 vCPU / 2 ГБ), один Python-процесс под systemd, Caddy
   с авто-HTTPS.
 - SQLite-файл + Litestream → непрерывная репликация в S3-совместимое
