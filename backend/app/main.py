@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from zoneinfo import ZoneInfo
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
@@ -11,6 +12,7 @@ from app.api import account, auth, booking, delivery, menu, orders, sse, tables,
 from app.config import settings
 from app.db import create_tables
 from app.services.menu import menu_service
+from app.services.staff_bot import staff_bot
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +28,6 @@ async def lifespan(app: FastAPI):
     except Exception:
         logger.exception("Не удалось загрузить меню при старте")
 
-    scheduler: AsyncIOScheduler | None = None
     if not settings.iiko_mock:
         client = get_iiko_client()
         if isinstance(client, CloudIikoClient):
@@ -34,13 +35,21 @@ async def lifespan(app: FastAPI):
                 await client.ensure_webhooks()
             except Exception:
                 logger.exception("Не удалось настроить вебхуки iiko")
+
+    try:
+        await staff_bot.setup_webhook()
+    except Exception:
+        logger.exception("Не удалось настроить вебхук Telegram-бота")
+
+    scheduler = AsyncIOScheduler(timezone=ZoneInfo(settings.iiko_terminal_timezone))
+    if not settings.iiko_mock:
         # Страховочный синк: вебхуки — мгновенные обновления, синк — сверка
-        scheduler = AsyncIOScheduler()
         scheduler.add_job(menu_service.refresh, "interval", minutes=MENU_SYNC_MINUTES)
-        scheduler.start()
+    # Чистка смен персонала в конце дня (час — конфиг, локальное время кафе)
+    scheduler.add_job(staff_bot.end_of_day_cleanup, "cron", hour=settings.shift_end_hour)
+    scheduler.start()
     yield
-    if scheduler is not None:
-        scheduler.shutdown(wait=False)
+    scheduler.shutdown(wait=False)
 
 
 app = FastAPI(title="AI Cafe API", lifespan=lifespan)

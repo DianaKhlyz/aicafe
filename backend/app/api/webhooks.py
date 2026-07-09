@@ -15,6 +15,7 @@ from app.db import session_factory
 from app.events import bus
 from app.models import OrderLink
 from app.services.menu import menu_service
+from app.services.staff_bot import staff_bot
 
 router = APIRouter(prefix="/api/webhooks", tags=["webhooks"])
 
@@ -35,6 +36,25 @@ async def iiko_webhook(events: list[dict[str, Any]], request: Request) -> dict[s
                 await _update_order_status(event)
             case "ReserveUpdate":
                 bus.publish("reserves", event.get("eventInfo"))
+            case "PersonalShift":
+                # Фаза Б бота смен: смена пробита на кассе -> зеркалим в TG
+                info = event.get("eventInfo") or {}
+                if "id" in info and "opened" in info:
+                    await staff_bot.handle_iiko_personal_shift(
+                        str(info["id"]), bool(info["opened"])
+                    )
+    return {"status": "ok"}
+
+
+@router.post("/telegram")
+async def telegram_webhook(update: dict[str, Any], request: Request) -> dict[str, str]:
+    """Апдейты Telegram-бота смен (кнопки в личке)."""
+    if settings.telegram_webhook_secret and (
+        request.headers.get("X-Telegram-Bot-Api-Secret-Token")
+        != settings.telegram_webhook_secret
+    ):
+        raise HTTPException(status_code=401)
+    await staff_bot.handle_update(update)
     return {"status": "ok"}
 
 

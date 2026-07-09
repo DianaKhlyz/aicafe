@@ -25,9 +25,17 @@ class Settings(BaseSettings):
     # Подпись сессионных cookie ЛК — на проде заменить на случайную строку
     session_secret: str = "dev-secret-change-me"
 
+    # Публичный адрес сайта (https://домен) — для вебхука Telegram-бота
+    public_base_url: str = ""
+
     # Telegram-уведомления персоналу о заказах/бронях; пусто = выключено
     telegram_bot_token: str = ""
     telegram_staff_chat_id: str = ""
+    # Секрет вебхука бота (Telegram шлёт его в заголовке при каждом апдейте)
+    telegram_webhook_secret: str = ""
+    # Час окончания смен (локальное время кафе): 0 = полночь.
+    # Граница обсуждается с заказчиком — см. docs/demo-script.md
+    shift_end_hour: int = 0
 
     database_path: str = "aicafe.db"
     cors_origins: list[str] = ["http://localhost:5173"]
