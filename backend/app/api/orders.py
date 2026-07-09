@@ -1,7 +1,10 @@
+import json
+
 from fastapi import APIRouter, HTTPException
 
 from app import schemas
 from app.adapters.iiko import get_iiko_client
+from app.adapters.notify.telegram import staff_notifier
 from app.adapters.payments import get_payment_provider
 from app.db import session_factory
 from app.models import OrderLink
@@ -10,6 +13,12 @@ from app.services.menu import menu_service
 from app.services.table_cart import table_cart_service
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
+
+MODE_LABELS = {
+    schemas.OrderMode.DELIVERY: "доставка",
+    schemas.OrderMode.PICKUP: "самовывоз",
+    schemas.OrderMode.TABLE: "за столом",
+}
 
 
 # Объявлен раньше GET /{order_id}, чтобы «eta» не захватывался как id заказа
@@ -65,10 +74,17 @@ async def checkout(request: schemas.CheckoutRequest) -> schemas.OrderView:
         payment_id=payment.id,
         payment_status=payment.status,
         eta_minutes=eta,
+        phone=request.phone,
+        items_json=json.dumps([line.model_dump() for line in request.items]),
+        amount=amount,
     )
     async with session_factory() as session:
         session.add(order)
         await session.commit()
+    await staff_notifier.notify(
+        f"Новый заказ с сайта: {MODE_LABELS[request.mode]}, {amount:.0f} ₽"
+        + (f", стол {request.table_code}" if request.table_code else "")
+    )
     return _to_view(order, payment_url=payment.url)
 
 

@@ -3,10 +3,11 @@
 // TODO при подключении DaData: подсказки адреса + проверка зоны
 // (/api/delivery/check-address) до оплаты.
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { AddressField, type ZoneCheck } from "../features/address/AddressField";
+import { useAuth } from "../features/auth/useAuth";
 import { type OrderMode, useCart } from "../features/cart/store";
 import { useTableCart } from "../features/cart/useTableCart";
 
@@ -20,6 +21,13 @@ export function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [zoneCheck, setZoneCheck] = useState<ZoneCheck | null>(null);
+
+  // Авторизованному гостю телефон подставляем автоматически
+  const { me } = useAuth();
+  useEffect(() => {
+    if (me && !phone) setPhone(me.phone);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [me]);
   const [pickupAsap, setPickupAsap] = useState(true);
   const [desiredTime, setDesiredTime] = useState("");
   const [comment, setComment] = useState("");

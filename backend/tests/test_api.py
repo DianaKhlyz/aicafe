@@ -80,6 +80,41 @@ def test_check_address_in_zone(client):
     assert response.json()["in_zone"] is False
 
 
+def test_auth_and_order_history_flow(client):
+    phone = "+79995556677"
+
+    # До входа история недоступна
+    assert client.get("/api/account/orders").status_code == 401
+
+    # Неверный код отклоняется
+    client.post("/api/auth/request-code", json={"phone": phone})
+    bad = client.post("/api/auth/verify", json={"phone": phone, "code": "1234"})
+    assert bad.status_code == 401
+
+    # Дев-код 0000 создаёт пользователя и сессию (cookie)
+    ok = client.post("/api/auth/verify", json={"phone": phone, "code": "0000"})
+    assert ok.status_code == 200
+    assert client.get("/api/auth/me").json()["phone"] == phone
+
+    # Заказ с этим телефоном попадает в историю со снапшотом состава
+    client.post(
+        "/api/orders",
+        json={
+            "mode": "pickup",
+            "phone": phone,
+            "items": [{"item_id": "dish-syrniki", "quantity": 2}],
+        },
+    )
+    history = client.get("/api/account/orders").json()
+    assert len(history) == 1
+    assert history[0]["amount"] == 640
+    assert history[0]["items"] == [{"item_id": "dish-syrniki", "quantity": 2}]
+
+    # Выход завершает сессию
+    client.post("/api/auth/logout")
+    assert client.get("/api/auth/me").status_code == 401
+
+
 def test_suggest_addresses(client):
     response = client.get("/api/delivery/suggest", params={"query": "Тверская"})
     assert response.status_code == 200

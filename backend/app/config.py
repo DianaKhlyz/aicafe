@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     # заказчика (бесплатный тариф, 10 000 запросов/день)
     dadata_api_key: str = ""
 
+    # Подпись сессионных cookie ЛК — на проде заменить на случайную строку
+    session_secret: str = "dev-secret-change-me"
+
+    # Telegram-уведомления персоналу о заказах/бронях; пусто = выключено
+    telegram_bot_token: str = ""
+    telegram_staff_chat_id: str = ""
+
     database_path: str = "aicafe.db"
     cors_origins: list[str] = ["http://localhost:5173"]
 

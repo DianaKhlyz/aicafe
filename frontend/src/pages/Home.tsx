@@ -2,8 +2,25 @@
 // быстрые действия. Блок «повторить прошлый заказ» появится вместе
 // с личным кабинетом.
 import { Link } from "react-router-dom";
+import { useAuth, useOrderHistory } from "../features/auth/useAuth";
+import { RepeatOrderButton } from "../features/auth/RepeatOrderButton";
 import { useAddItem } from "../features/cart/useAddItem";
 import { useMenu } from "./Menu";
+
+function RepeatLastOrder() {
+  const { me } = useAuth();
+  const history = useOrderHistory(Boolean(me));
+  const last = history.data?.[0];
+  if (!me || !last) return null;
+  return (
+    <section className="repeat-last">
+      <h2>Как обычно?</h2>
+      <p>
+        Прошлый заказ на {last.amount} ₽ <RepeatOrderButton order={last} />
+      </p>
+    </section>
+  );
+}
 
 export function HomePage() {
   const { data: menu } = useMenu();
@@ -31,6 +48,8 @@ export function HomePage() {
           </Link>
         </div>
       </section>
+
+      <RepeatLastOrder />
 
       {hits.length > 0 && (
         <section>

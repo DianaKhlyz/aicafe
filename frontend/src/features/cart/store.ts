@@ -20,6 +20,7 @@ interface CartState {
   guestName: string; // имя гостя для общей корзины стола
   setGuestName: (name: string) => void;
   add: (item: Omit<CartLine, "quantity">) => void;
+  addLines: (lines: CartLine[]) => void; // повтор заказа: весь состав разом
   remove: (itemId: string) => void;
   setQuantity: (itemId: string, quantity: number) => void;
   enterTableMode: (tableCode: string) => void;
@@ -36,6 +37,17 @@ export const useCart = create<CartState>()(
       tableCode: null,
       guestName: "",
       setGuestName: (name) => set({ guestName: name.slice(0, 40) }),
+
+      addLines: (lines) =>
+        set((state) => {
+          const merged = [...state.lines];
+          for (const line of lines) {
+            const existing = merged.find((l) => l.itemId === line.itemId);
+            if (existing) existing.quantity += line.quantity;
+            else merged.push({ ...line });
+          }
+          return { lines: merged };
+        }),
 
       add: (item) =>
         set((state) => {

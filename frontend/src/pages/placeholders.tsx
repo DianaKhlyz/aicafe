@@ -12,12 +12,6 @@ export function AboutPage() {
   return <h1>О кафе</h1>;
 }
 
-export function AccountPage() {
-  // Личный кабинет: история, повтор заказа, адреса, бонусы.
-  // Появится вместе с авторизацией (flash-call / Telegram Gateway)
-  return <h1>Личный кабинет</h1>;
-}
-
 export function NotFoundPage() {
   return (
     <div>

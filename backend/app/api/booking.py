@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app import schemas
 from app.adapters.iiko import get_iiko_client
+from app.adapters.notify.telegram import staff_notifier
 from app.events import bus
 
 router = APIRouter(prefix="/api/booking", tags=["booking"])
@@ -23,4 +24,8 @@ async def create_reserve(request: schemas.ReserveRequest) -> schemas.ReserveView
     # Бронь с сайта — оповещаем открытые карты залов сразу; брони, сделанные
     # хостес в iiko, придут тем же каналом через вебхук ReserveUpdate
     bus.publish("reserves", {"table_id": reserve.table_id, "status": reserve.status})
+    await staff_notifier.notify(
+        f"Новая бронь с сайта: {request.guests} гостей, "
+        f"{request.time:%d.%m %H:%M}, телефон {request.phone}"
+    )
     return reserve

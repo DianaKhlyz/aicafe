@@ -9,7 +9,8 @@ import { CheckoutPage } from "./pages/Checkout";
 import { OrderPage } from "./pages/Order";
 import { TablePage } from "./pages/Table";
 import { BookingPage } from "./pages/Booking";
-import { AboutPage, AccountPage, NotFoundPage, PromoPage } from "./pages/placeholders";
+import { AccountPage } from "./pages/Account";
+import { AboutPage, NotFoundPage, PromoPage } from "./pages/placeholders";
 
 // Leaflet тяжёлый — грузим страницу «Доставка» отдельным чанком
 const DeliveryPage = lazy(() =>

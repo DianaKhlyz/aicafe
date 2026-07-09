@@ -97,6 +97,34 @@ class OrderView(BaseModel):
     created_at: datetime
 
 
+# --- Авторизация и личный кабинет ---------------------------------------------
+
+
+class AuthPhone(BaseModel):
+    phone: str = Field(min_length=10, max_length=20)
+
+
+class AuthVerify(BaseModel):
+    phone: str = Field(min_length=10, max_length=20)
+    code: str = Field(min_length=4, max_length=6)
+
+
+class AuthMe(BaseModel):
+    phone: str
+
+
+class AccountOrder(BaseModel):
+    """Заказ в истории ЛК — со снапшотом состава для повтора в 1 клик."""
+
+    id: str
+    mode: OrderMode
+    status: OrderStatus
+    payment_status: str
+    amount: float
+    items: list[CartItem]
+    created_at: datetime
+
+
 # --- Общая корзина стола ------------------------------------------------------
 
 
