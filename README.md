@@ -27,6 +27,10 @@ make types          # перегенерация TS-типов из OpenAPI-сх
 | [docs/architecture.md](docs/architecture.md) | Принципы, стек, компоненты, интеграции, структура сайта, деплой |
 | [docs/features.md](docs/features.md) | Полная карта фич по фазам со статусами согласования |
 | [docs/open-questions.md](docs/open-questions.md) | Открытые вопросы, риски, проверки на песочнице iiko, процесс работы |
+| [docs/demo-script.md](docs/demo-script.md) | Сценарии демонстрации всех возможностей с пояснениями |
+| [deploy/demo-install.md](deploy/demo-install.md) | Установка демо на чистом сервере (3 варианта) |
+| [docs/design-brief.md](docs/design-brief.md) | Бриф дизайнеру |
+| [docs/iiko-api-notes.md](docs/iiko-api-notes.md) | Проверенные факты по iiko Transport API |
 
 ## Ключевые решения одной строкой
 
