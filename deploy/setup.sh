@@ -4,8 +4,10 @@
 # Повторный запуск безопасен (шаги идемпотентны).
 set -euo pipefail
 
-DOMAIN="${1:?Использование: ./setup.sh домен.ru [url-репозитория]}"
+DOMAIN="${1:?Использование: ./setup.sh домен.ru [url-репозитория] [ветка]}"
 REPO="${2:-https://github.com/DianaKhlyz/aicafe.git}"
+# Рабочая ветка проекта (ветка по умолчанию на GitHub может отличаться)
+BRANCH="${3:-claude/cafe-site-architecture-3qpvau}"
 APP_DIR=/opt/aicafe
 
 echo "== Базовые пакеты"
@@ -36,7 +38,11 @@ fi
 echo "== Пользователь и код"
 id -u aicafe >/dev/null 2>&1 || useradd --system --create-home --shell /usr/sbin/nologin aicafe
 if [ ! -d "$APP_DIR/.git" ]; then
-    git clone "$REPO" "$APP_DIR"
+    git clone -b "$BRANCH" "$REPO" "$APP_DIR"
+fi
+# Если клонировали без -b и попали на пустую ветку по умолчанию — переключаемся
+if [ ! -f "$APP_DIR/backend/pyproject.toml" ]; then
+    git -C "$APP_DIR" checkout "$BRANCH"
 fi
 chown -R aicafe:aicafe "$APP_DIR"
 

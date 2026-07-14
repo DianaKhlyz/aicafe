@@ -43,9 +43,13 @@ cd frontend && npm run dev -- --host
 
 ```bash
 ssh root@СЕРВЕР
-git clone https://github.com/DianaKhlyz/aicafe.git /opt/aicafe
+git clone -b claude/cafe-site-architecture-3qpvau https://github.com/DianaKhlyz/aicafe.git /opt/aicafe
 /opt/aicafe/deploy/setup.sh демо-домен.ru
 ```
+
+Флаг `-b` важен: рабочая ветка проекта может не совпадать с веткой по
+умолчанию на GitHub. Если уже клонировали без него и файлов нет —
+`cd /opt/aicafe && git checkout claude/cafe-site-architecture-3qpvau`.
 
 Скрипт сам ставит Node, uv и Caddy, создаёт системного пользователя,
 собирает фронтенд, включает systemd-юнит и получает HTTPS-сертификат.
