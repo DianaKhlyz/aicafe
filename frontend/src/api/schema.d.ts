@@ -303,6 +303,101 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/demo/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Panel Status */
+        get: operations["panel_status_api_demo_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/demo/stoplist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Toggle Stop
+         * @description Имитация StopListUpdate: блюдо гаснет/возвращается у всех клиентов.
+         */
+        post: operations["toggle_stop_api_demo_stoplist_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/demo/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recent Orders */
+        get: operations["recent_orders_api_demo_orders_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/demo/orders/{order_id}/next-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Advance Order
+         * @description Имитация DeliveryOrderUpdate: заказ переходит к следующему шагу,
+         *     открытый трекер обновляется по SSE.
+         */
+        post: operations["advance_order_api_demo_orders__order_id__next_status_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/demo/telegram-test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Telegram Test
+         * @description Пробная отправка в группу персонала с диагностикой ошибок.
+         */
+        post: operations["telegram_test_api_demo_telegram_test_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/webhooks/iiko": {
         parameters: {
             query?: never;
@@ -507,6 +602,27 @@ export interface components {
              */
             delivery_price: number;
         };
+        /** DemoOrderInfo */
+        DemoOrderInfo: {
+            /** Id */
+            id: string;
+            mode: components["schemas"]["OrderMode"];
+            status: components["schemas"]["OrderStatus"];
+            /** Amount */
+            amount: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** DemoPanelStatus */
+        DemoPanelStatus: {
+            /** Enabled */
+            enabled: boolean;
+            /** Telegram Configured */
+            telegram_configured: boolean;
+        };
         /**
          * EtaView
          * @description Предпросмотр времени готовности самовывоза (до оформления заказа).
@@ -650,6 +766,13 @@ export interface components {
             /** Tables */
             tables: components["schemas"]["Table"][];
         };
+        /** StopToggle */
+        StopToggle: {
+            /** Item Id */
+            item_id: string;
+            /** Stopped */
+            stopped: boolean;
+        };
         /** Table */
         Table: {
             /** Id */
@@ -708,6 +831,15 @@ export interface components {
              * @default Гость
              */
             guest: string;
+        };
+        /** TelegramTestResult */
+        TelegramTestResult: {
+            /** Enabled */
+            enabled: boolean;
+            /** Ok */
+            ok: boolean;
+            /** Detail */
+            detail: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -1164,6 +1296,130 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountOrder"][];
+                };
+            };
+        };
+    };
+    panel_status_api_demo_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemoPanelStatus"];
+                };
+            };
+        };
+    };
+    toggle_stop_api_demo_stoplist_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StopToggle"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recent_orders_api_demo_orders_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemoOrderInfo"][];
+                };
+            };
+        };
+    };
+    advance_order_api_demo_orders__order_id__next_status_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemoOrderInfo"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    telegram_test_api_demo_telegram_test_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TelegramTestResult"];
                 };
             };
         };

@@ -34,5 +34,31 @@ class TelegramStaffNotifier:
         except httpx.HTTPError:
             logger.exception("Не удалось отправить уведомление персоналу в Telegram")
 
+    async def send_test(self) -> dict[str, object]:
+        """Для демо-пульта: пробная отправка с человекочитаемой диагностикой."""
+        if not self.enabled:
+            return {
+                "enabled": False,
+                "ok": False,
+                "detail": "Не заданы AICAFE_TELEGRAM_BOT_TOKEN и/или "
+                "AICAFE_TELEGRAM_STAFF_CHAT_ID (см. deploy/demo-install.md)",
+            }
+        try:
+            response = await self._http.post(
+                f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage",
+                json={
+                    "chat_id": settings.telegram_staff_chat_id,
+                    "text": "Тестовое уведомление с демо-пульта — связь работает ✅",
+                },
+            )
+            data = response.json()
+        except httpx.HTTPError as exc:
+            return {"enabled": True, "ok": False, "detail": f"Сеть: {exc}"}
+        if data.get("ok"):
+            return {"enabled": True, "ok": True, "detail": "Отправлено — проверьте группу"}
+        # Типичные ответы Telegram: chat not found (неверный chat_id),
+        # Unauthorized (неверный токен), bot is not a member (бот не в группе)
+        return {"enabled": True, "ok": False, "detail": str(data.get("description"))}
+
 
 staff_notifier = TelegramStaffNotifier()

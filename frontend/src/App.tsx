@@ -10,6 +10,7 @@ import { OrderPage } from "./pages/Order";
 import { TablePage } from "./pages/Table";
 import { BookingPage } from "./pages/Booking";
 import { AccountPage } from "./pages/Account";
+import { DemoPanelPage } from "./pages/DemoPanel";
 import { AboutPage, NotFoundPage, PromoPage } from "./pages/placeholders";
 
 // Leaflet тяжёлый — грузим страницу «Доставка» отдельным чанком
@@ -62,6 +63,8 @@ export function App() {
             {/* Режим «за столом»: QR на столе ведёт сюда */}
             <Route path="/t/:tableCode" element={<TablePage />} />
             <Route path="/account" element={<AccountPage />} />
+            {/* Демо-пульт: не в навигации, работает только в мок-режиме */}
+            <Route path="/demo" element={<DemoPanelPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

@@ -125,6 +125,33 @@ class AccountOrder(BaseModel):
     created_at: datetime
 
 
+# --- Демо-пульт (только мок-режим) --------------------------------------------
+
+
+class DemoPanelStatus(BaseModel):
+    enabled: bool
+    telegram_configured: bool
+
+
+class StopToggle(BaseModel):
+    item_id: str
+    stopped: bool
+
+
+class DemoOrderInfo(BaseModel):
+    id: str
+    mode: OrderMode
+    status: OrderStatus
+    amount: float
+    created_at: datetime
+
+
+class TelegramTestResult(BaseModel):
+    enabled: bool
+    ok: bool
+    detail: str
+
+
 # --- Общая корзина стола ------------------------------------------------------
 
 
