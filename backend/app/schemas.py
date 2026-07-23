@@ -30,6 +30,7 @@ class MenuItem(BaseModel):
     image_url: str | None = None
     allergens: list[str] = []
     tags: list[str] = []  # «острое», «веган», «хит» и т.п.
+    pairing: str | None = None  # рекомендация к пиву («к тёмному лагеру»)
     nutrition: Nutrition | None = None
     in_stop_list: bool = False
 

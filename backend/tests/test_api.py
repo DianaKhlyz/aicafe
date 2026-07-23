@@ -15,11 +15,11 @@ def test_menu_returns_categories_with_stop_list(client):
     assert response.status_code == 200
     menu = response.json()
     names = [c["name"] for c in menu["categories"]]
-    assert "Завтраки" in names
-    # В мок-данных «Том-ям» в стоп-листе — флаг должен быть проставлен
+    assert "Из смокера" in names
+    # В мок-данных IPA в стоп-листе — флаг должен быть проставлен
     items = {i["id"]: i for c in menu["categories"] for i in c["items"]}
-    assert items["dish-tomyum"]["in_stop_list"] is True
-    assert items["dish-syrniki"]["in_stop_list"] is False
+    assert items["dish-ipa"]["in_stop_list"] is True
+    assert items["dish-brisket"]["in_stop_list"] is False
 
 
 def test_eta_preview(client):
@@ -31,7 +31,7 @@ def test_eta_preview(client):
 def test_checkout_requires_phone_for_pickup(client):
     response = client.post(
         "/api/orders",
-        json={"mode": "pickup", "items": [{"item_id": "dish-syrniki", "quantity": 1}]},
+        json={"mode": "pickup", "items": [{"item_id": "dish-brisket", "quantity": 1}]},
     )
     assert response.status_code == 422
 
@@ -42,7 +42,7 @@ def test_checkout_pickup_returns_eta(client):
         json={
             "mode": "pickup",
             "phone": "+79990001122",
-            "items": [{"item_id": "dish-syrniki", "quantity": 2}],
+            "items": [{"item_id": "dish-brisket", "quantity": 2}],
         },
     )
     assert response.status_code == 200
@@ -61,7 +61,7 @@ def test_checkout_rejects_stop_listed_item(client):
         json={
             "mode": "pickup",
             "phone": "+79990001122",
-            "items": [{"item_id": "dish-tomyum", "quantity": 1}],
+            "items": [{"item_id": "dish-ipa", "quantity": 1}],
         },
     )
     assert response.status_code == 409
@@ -102,13 +102,13 @@ def test_auth_and_order_history_flow(client):
         json={
             "mode": "pickup",
             "phone": phone,
-            "items": [{"item_id": "dish-syrniki", "quantity": 2}],
+            "items": [{"item_id": "dish-brisket", "quantity": 2}],
         },
     )
     history = client.get("/api/account/orders").json()
     assert len(history) == 1
-    assert history[0]["amount"] == 640
-    assert history[0]["items"] == [{"item_id": "dish-syrniki", "quantity": 2}]
+    assert history[0]["amount"] == 1380
+    assert history[0]["items"] == [{"item_id": "dish-brisket", "quantity": 2}]
 
     # Выход завершает сессию
     client.post("/api/auth/logout")
@@ -163,15 +163,15 @@ def test_table_cart_shared_flow(client):
     # Два гостя наполняют одну корзину стола
     client.post(
         "/api/tables/A2/cart",
-        json={"item_id": "dish-syrniki", "quantity": 2, "guest": "Аня"},
+        json={"item_id": "dish-brisket", "quantity": 2, "guest": "Аня"},
     )
     response = client.post(
         "/api/tables/A2/cart",
-        json={"item_id": "dish-raf", "quantity": 1, "guest": "Борис"},
+        json={"item_id": "dish-lager", "quantity": 1, "guest": "Борис"},
     )
     cart = response.json()
     assert len(cart["lines"]) == 2
-    assert cart["total"] == 320 * 2 + 290
+    assert cart["total"] == 690 * 2 + 320
     assert {line["guest"] for line in cart["lines"]} == {"Аня", "Борис"}
 
     # Чекаут стола берёт серверную корзину и очищает её

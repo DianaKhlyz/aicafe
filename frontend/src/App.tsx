@@ -18,6 +18,7 @@ const DeliveryPage = lazy(() =>
   import("./pages/Delivery").then((module) => ({ default: module.DeliveryPage })),
 );
 import { useCart } from "./features/cart/store";
+import { FloatingCart } from "./features/cart/FloatingCart";
 
 const queryClient = new QueryClient();
 
@@ -26,11 +27,21 @@ function Header() {
   return (
     <header className="site-header">
       <nav>
-        <Link to="/">Кафе</Link>
+        <Link to="/" className="brand">
+          <span className="coaster seal">БЯ</span>
+          <span>
+            <b>Брискет Ярд</b>
+            <span className="sub">гастропаб · с 2026</span>
+          </span>
+        </Link>
         <Link to="/menu">Меню</Link>
         <Link to="/booking">Бронь</Link>
         <Link to="/delivery">Доставка</Link>
-        <Link to="/cart">Корзина{count > 0 ? ` (${count})` : ""}</Link>
+        <Link to="/account">Кабинет</Link>
+        {/* Якорь для анимации «полёта» в корзину */}
+        <Link to="/cart" id="cart-anchor" className="cart-link">
+          Корзина{count > 0 ? ` (${count})` : ""}
+        </Link>
       </nav>
     </header>
   );
@@ -68,6 +79,7 @@ export function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
+        <FloatingCart />
       </BrowserRouter>
     </QueryClientProvider>
   );

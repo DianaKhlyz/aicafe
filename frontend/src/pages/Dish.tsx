@@ -1,5 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useAddItem } from "../features/cart/useAddItem";
+import { flyToCart } from "../features/cart/fly";
+import { phClass } from "../features/cart/ph";
 import { useMenu } from "./Menu";
 
 export function DishPage() {
@@ -24,11 +26,17 @@ export function DishPage() {
   return (
     <article className="dish-card">
       <Link to="/menu">← Меню</Link>
-      {/* Фото придёт из внешнего меню iiko и будет кэшироваться локально */}
-      {item.image_url && <img src={item.image_url} alt={item.name} />}
+      {/* Фото придёт из внешнего меню iiko; пока — градиент-плейсхолдер */}
+      <div className="dish-hero">
+        {item.image_url ? (
+          <img src={item.image_url} alt={item.name} />
+        ) : (
+          <span className={`ph ${phClass(item.id)}`} />
+        )}
+      </div>
       <h1>{item.name}</h1>
       <p>{item.description}</p>
-      {item.tags.length > 0 && <p className="dish-tags">{item.tags.join(" · ")}</p>}
+      {item.pairing && <p className="form-hint">🍺 хорошо {item.pairing}</p>}
 
       {item.nutrition && (
         <table className="nutrition-table">
@@ -59,12 +67,16 @@ export function DishPage() {
       )}
 
       <footer className="dish-card-footer">
-        <span className="dish-price">{item.price} ₽</span>
+        <span className="price-mat tnum">{item.price.toLocaleString("ru-RU")}</span>
         {item.in_stop_list ? (
-          <span className="dish-stopped-label">Закончилось</span>
+          <span className="dish-out-label">Нет в наличии</span>
         ) : (
           <button
-            onClick={() => addToCart({ itemId: item.id, name: item.name, price: item.price })}
+            className="button-primary"
+            onClick={(e) => {
+              addToCart({ itemId: item.id, name: item.name, price: item.price });
+              flyToCart(e.currentTarget);
+            }}
           >
             В корзину
           </button>

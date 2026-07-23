@@ -1,10 +1,11 @@
-// Главная-витрина: хиты из меню (тег «хит» приходит из iiko),
-// быстрые действия. Блок «повторить прошлый заказ» появится вместе
-// с личным кабинетом.
+// Главная-витрина: дышащий герой (пузырьки + ботанический мотив обоев),
+// хиты из меню и «повторить прошлый заказ». Витрина, а не каталог —
+// стоп-состояний тут нет: впечатление, что есть всё, что захочется.
 import { Link } from "react-router-dom";
 import { useAuth, useOrderHistory } from "../features/auth/useAuth";
 import { RepeatOrderButton } from "../features/auth/RepeatOrderButton";
-import { useAddItem } from "../features/cart/useAddItem";
+import { DishCard } from "../features/cart/DishCard";
+import { HeroBubbles } from "../features/home/HeroBubbles";
 import { useMenu } from "./Menu";
 
 function RepeatLastOrder() {
@@ -24,28 +25,50 @@ function RepeatLastOrder() {
 
 export function HomePage() {
   const { data: menu } = useMenu();
-  const addToCart = useAddItem();
 
   const hits = (menu?.categories ?? [])
     .flatMap((category) => category.items)
     .filter((item) => item.tags.includes("хит") && !item.in_stop_list)
-    .slice(0, 4);
+    .slice(0, 3);
 
   return (
     <div>
       <section className="hero">
-        <h1>Кафе, в котором ждут</h1>
-        <p>Доставим горячим, соберём к вашему приходу или накроем ваш стол.</p>
-        <div className="cta-row">
-          <Link to="/menu" className="button-primary">
-            Смотреть меню
-          </Link>
-          <Link to="/booking" className="button-secondary">
-            Забронировать стол
-          </Link>
-          <Link to="/delivery" className="button-secondary">
-            Условия доставки
-          </Link>
+        <HeroBubbles />
+        <span className="hero-glow" />
+        <span className="hero-flora" />
+        <div className="hero-inner">
+          <span className="eyebrow">Мясной гастропаб · крафтовое пиво</span>
+          <h1>
+            По-домашнему
+            <br />и <em>всегда вкусно</em>
+          </h1>
+          <p className="hero-lead">
+            Сытные блюда из смокера, холодное пиво на кранах и большой стол для всей семьи.
+            Приходите как есть — Вам здесь всегда рады.
+          </p>
+          <div className="cta-row">
+            <Link to="/menu" className="button-primary">
+              Смотреть меню
+            </Link>
+            <Link to="/booking" className="button-secondary">
+              Забронировать стол
+            </Link>
+          </div>
+          <div className="hero-meta">
+            <div>
+              <b className="tnum">12</b>
+              <span>сортов на кранах</span>
+            </div>
+            <div>
+              <b>от 45 мин</b>
+              <span>доставка по городу</span>
+            </div>
+            <div>
+              <b>−10%</b>
+              <span>на самовывоз</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -53,25 +76,13 @@ export function HomePage() {
 
       {hits.length > 0 && (
         <section>
-          <h2>Хиты</h2>
+          <div className="sec-head">
+            <span className="eyebrow">Наше меню</span>
+            <h2>То, ради чего возвращаются</h2>
+          </div>
           <ul className="menu-grid">
-            {hits.map((item) => (
-              <li key={item.id} className="dish">
-                <h3>
-                  <Link to={`/menu/${item.id}`}>{item.name}</Link>
-                </h3>
-                <p>{item.description}</p>
-                <footer>
-                  <span className="dish-price">{item.price} ₽</span>
-                  <button
-                    onClick={() =>
-                      addToCart({ itemId: item.id, name: item.name, price: item.price })
-                    }
-                  >
-                    В корзину
-                  </button>
-                </footer>
-              </li>
+            {hits.map((item, i) => (
+              <DishCard key={item.id} item={item} index={i} />
             ))}
           </ul>
         </section>

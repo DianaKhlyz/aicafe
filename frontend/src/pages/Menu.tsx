@@ -1,8 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { api } from "../api/client";
-import { useAddItem } from "../features/cart/useAddItem";
+import { DishCard } from "../features/cart/DishCard";
 import { useSSE } from "../shared/useSSE";
 
 export function useMenu() {
@@ -18,7 +17,6 @@ export function useMenu() {
 
 export function MenuPage() {
   const queryClient = useQueryClient();
-  const addToCart = useAddItem();
 
   const [search, setSearch] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
@@ -124,29 +122,8 @@ export function MenuPage() {
         <section key={category.id}>
           <h2>{category.name}</h2>
           <ul className="menu-grid">
-            {category.items.map((item) => (
-              <li key={item.id} className={item.in_stop_list ? "dish dish--stopped" : "dish"}>
-                <h3>
-                  <Link to={`/menu/${item.id}`}>{item.name}</Link>
-                </h3>
-                <p>{item.description}</p>
-                {item.tags.length > 0 && <p className="dish-tags">{item.tags.join(" · ")}</p>}
-                {item.nutrition && <p className="dish-kcal">{item.nutrition.kcal} ккал</p>}
-                <footer>
-                  <span className="dish-price">{item.price} ₽</span>
-                  {item.in_stop_list ? (
-                    <span className="dish-stopped-label">Закончилось</span>
-                  ) : (
-                    <button
-                      onClick={() =>
-                        addToCart({ itemId: item.id, name: item.name, price: item.price })
-                      }
-                    >
-                      В корзину
-                    </button>
-                  )}
-                </footer>
-              </li>
+            {category.items.map((item, i) => (
+              <DishCard key={item.id} item={item} index={i} />
             ))}
           </ul>
         </section>

@@ -13,18 +13,18 @@ def client():
 
 def test_stop_toggle_reflected_in_menu(client):
     stopped = client.post(
-        "/api/demo/stoplist", json={"item_id": "dish-syrniki", "stopped": True}
+        "/api/demo/stoplist", json={"item_id": "dish-brisket", "stopped": True}
     ).json()
-    assert "dish-syrniki" in stopped
+    assert "dish-brisket" in stopped
 
     menu = client.get("/api/menu").json()
     items = {i["id"]: i for c in menu["categories"] for i in c["items"]}
-    assert items["dish-syrniki"]["in_stop_list"] is True
+    assert items["dish-brisket"]["in_stop_list"] is True
 
-    client.post("/api/demo/stoplist", json={"item_id": "dish-syrniki", "stopped": False})
+    client.post("/api/demo/stoplist", json={"item_id": "dish-brisket", "stopped": False})
     menu = client.get("/api/menu").json()
     items = {i["id"]: i for c in menu["categories"] for i in c["items"]}
-    assert items["dish-syrniki"]["in_stop_list"] is False
+    assert items["dish-brisket"]["in_stop_list"] is False
 
 
 def test_order_advances_through_chain(client):

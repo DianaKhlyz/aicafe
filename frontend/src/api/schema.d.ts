@@ -680,6 +680,8 @@ export interface components {
              * @default []
              */
             tags: string[];
+            /** Pairing */
+            pairing?: string | null;
             nutrition?: components["schemas"]["Nutrition"] | null;
             /**
              * In Stop List
