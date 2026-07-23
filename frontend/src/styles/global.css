@@ -71,10 +71,8 @@ button:active, .button-primary:active, .button-secondary:active { transform: sca
 /* ---- Герой ---- */
 .hero {
   position: relative; overflow: hidden;
-  border-radius: var(--radius-lg); border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  padding: clamp(2rem, 6vw, 4.5rem) clamp(1.2rem, 4vw, 3rem);
-  margin-bottom: var(--space-5);
+  padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(1.8rem, 4vw, 3rem);
+  margin-bottom: var(--space-4);
 }
 .hero-bubbles { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .hero-glow { position: absolute; z-index: 0; width: 55%; max-width: 620px; aspect-ratio: 1; right: -8%; top: -30%; background: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 26%, transparent), transparent 66%); pointer-events: none; }
@@ -102,7 +100,9 @@ button:active, .button-primary:active, .button-secondary:active { transform: sca
 .dish {
   background: var(--color-surface); border: 1px solid var(--color-border);
   border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column;
-  opacity: 0; animation: rise 0.5s ease backwards; animation-delay: calc(var(--i, 0) * 55ms);
+  /* backwards-fill держит скрытое состояние только ДО старта; после анимации
+     карточка остаётся видимой (базовая opacity: 1) — не исчезает */
+  animation: rise 0.5s ease backwards; animation-delay: calc(var(--i, 0) * 55ms);
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.3s, border-color 0.3s;
 }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
@@ -282,5 +282,4 @@ button:active, .button-primary:active, .button-secondary:active { transform: sca
 
 @media (prefers-reduced-motion: reduce) {
   *, ::after { animation: none !important; scroll-behavior: auto; }
-  .dish { opacity: 1; }
 }
